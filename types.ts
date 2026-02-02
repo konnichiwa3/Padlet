@@ -1,6 +1,9 @@
 export enum Category {
   LIBRARY = 'ห้องสมุดประชาชน',
+  PROVINCE = 'สกร.ประดับจังหวัด (สำนักงานส่งเสริมการเรียนรู้ประดับจังหวัด)',
+  DISTRICT = 'สกร.ระดับอำเภอ (ศูนย์ส่งเสริมการเรียนรู้ระอำเภอ)',
   SUB_DISTRICT = 'ศกร.ตำบล (ศูนย์ส่งเสริมการเรียนรู้ระดับตำบล)',
+  DISTRICT_LC = 'ศศช. (ศูนย์ส่งเสริมการเรียนชาวไทยแม่ฟ้าหลวงฯ)',
   COMMUNITY_LC = 'ศูนย์การเรียนรู้ชุมชน (ศรช.)',
   CO_LEARNING = 'Co-Learning Space',
   WISDOM = 'ภูมิปัญญาท้องถิ่น/ปราชญ์ชาวบ้าน',
@@ -18,6 +21,7 @@ export interface Review {
 }
 
 export interface Place {
+ // about: number;
   id: string;
   name: string;
   description: string;
@@ -47,6 +51,7 @@ export interface DessertIngredient {
 }
 
 export interface ThaiDessert {
+  //category: Category;
   id: string;
   // 1. Basic Info
   name: string;
@@ -96,4 +101,4 @@ export interface StatMetric {
   icon?: any;
 }
 
-export type ViewState = 'DASHBOARD' | 'MAP' | 'LIST' | 'ADMIN' | 'DETAIL' | 'DESSERTS';
+export type ViewState = 'DASHBOARD' | 'MAP' | 'LIST' | 'ADMIN' | 'DETAIL' | 'DESSERTS' | 'SUB_DISTRICT' | 'DISTRICT_LC' | 'COMMUNITY_LC' | 'INFO' | 'OTHER';
