@@ -6,19 +6,35 @@ import {
 } from 'recharts';
 import { 
   Users, MapPin, Star, BookOpen, TrendingUp, ChevronLeft, ChevronRight,
-  Building2, School, Lightbulb, Brain, Briefcase, Camera, MoreHorizontal, LayoutGrid, Utensils
+  Building2, School, Lightbulb, Brain, Briefcase, Camera, MoreHorizontal, LayoutGrid, Utensils,
+  Cat,
+  Share2,
+  Landmark,
+  Boxes,
+  Share,
+  HomeIcon,
+  Warehouse,
+  GraduationCap,
+  BookOpenText,
+  Tent,
+  Store,
+  HandPlatter,
+  Heater,
+  TreePine,
+  Fence,
+  Atom
 } from 'lucide-react';
 
 interface DashboardProps {
   places: Place[];
   desserts: ThaiDessert[];
   onSelectPlace: (place: Place) => void;
-  onSelectDessert: (dessert: ThaiDessert) => void;
+  onSelectDessert: (DISTRICT: ThaiDessert) => void;
 }
 
 // Formal Government Colors - Expanded Palette
 const COLORS = [
-    '#1e3a8a', // Blue-900
+    '#6b1e8a', // Blue-900
     '#d97706', // Amber-600
     '#0f766e', // Teal-700
     '#b91c1c', // Red-700
@@ -44,8 +60,13 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.Re
 const getCategoryIcon = (category: string) => {
   switch (category) {
     case Category.LIBRARY: return <BookOpen size={16} />;
+
+    case Category.PROVINCE: return <Building2 size={16} />;
+    case Category.DISTRICT: return <Utensils size={16} />;
     case Category.SUB_DISTRICT: return <Building2 size={16} />;
+    case Category.DISTRICT_LC: return <Building2 size={16} />;
     case Category.COMMUNITY_LC: return <School size={16} />;
+
     case Category.CO_LEARNING: return <Lightbulb size={16} />;
     case Category.WISDOM: return <Brain size={16} />;
     case Category.OCCUPATION: return <Briefcase size={16} />;
@@ -59,8 +80,29 @@ const Dashboard: React.FC<DashboardProps> = ({ places, desserts, onSelectPlace, 
   // Aggregate data
   const totalVisits = places.reduce((sum, p) => sum + p.visits, 0);
   const totalPlaces = places.length;
-  const avgRating = (places.reduce((sum, p) => sum + p.rating, 0) / totalPlaces).toFixed(1);
+  const avgRating = (places.reduce((sum, p) => sum + p.rating, 0) / totalPlaces).toFixed(1);     
   const totalDesserts = desserts.length;
+
+  const totalLIBRARY = places.filter(p => p.category === Category.LIBRARY).length;
+  
+  const totalPROVINCE = places.filter(p => p.category === Category.PROVINCE).length;
+  const totalDISTRICT = places.filter(p => p.category === Category.DISTRICT).length;
+  const totalSUB_DESTRICT = places.filter(p => p.category === Category.SUB_DISTRICT).length;
+  const totalCOMMUNITY_LC = places.filter(p => p.category === Category.COMMUNITY_LC).length;
+  const totalDISTRICT_LC = places.filter(p => p.category === Category.DISTRICT_LC).length;
+   
+  const totalOCCUPATION = places.filter(p => p.category === Category.OCCUPATION).length;
+  const totalTOURISM = places.filter(p => p.category === Category.TOURISM).length;
+  const totalOTHER = places.filter(p => p.category === Category.OTHER).length;
+  const totalWISDOM = places.filter(p => p.category === Category.WISDOM).length;
+  const CO_LEARNING = places.filter(p => p.category === Category.CO_LEARNING).length;
+
+
+  //  const totalAbout = Object.values(Category).map(cat => ({
+  //     name: cat,
+  //     value: places.filter(p => p.category === cat).length
+  //  })).filter(item => item.value > 0);
+
 
   // Dynamic Category Data Calculation
   const categoryData = Object.values(Category).map(cat => ({
@@ -97,22 +139,78 @@ const Dashboard: React.FC<DashboardProps> = ({ places, desserts, onSelectPlace, 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
+          title="จำนวนข้อมูลทั้งหมด  (แห่ง)" 
+          value={totalCOMMUNITY_LC +totalDISTRICT_LC +totalSUB_DESTRICT +totalDISTRICT +totalPROVINCE +totalLIBRARY }
+          icon={<Boxes size={24} />} 
+          colorClass="bg-amber-600" 
+        />
+        {/* <StatCard 
+          title="สถานศึกษาและศูนย์การเรียนในสังกัด (แห่ง)" 
+          value={totalPROVINCE} 
+          icon={<MapPin size={24} />} 
+          colorClass="bg-amber-600" 
+        /> */}
+        <StatCard 
+          title="ศูนย์การเรียนรู้ระดับอำเภอ (แห่ง)" 
+          value={totalDISTRICT} 
+          icon={<Landmark size={24} />} 
+          colorClass="bg-rose-600" 
+        />
+        <StatCard 
+          title="ศูนย์การเรียนรู้ระดับตำบล (แห่ง)"   
+          value={totalSUB_DESTRICT} 
+          icon={<Store size={24} />} 
+          colorClass="bg-rose-600" 
+        />
+        <StatCard 
+          title="ศศช. (แห่ง)" 
+          value={totalDISTRICT_LC}
+        //  value={totalAbout.length} 
+          icon={<Tent size={24} />} 
+          colorClass="bg-rose-600" 
+        />
+        <StatCard 
+          title="ศรช. (แห่ง)" 
+          value={totalCOMMUNITY_LC} 
+          icon={<School size={24} />} 
+          colorClass="bg-rose-600" 
+        />
+        <StatCard 
+          title="ห้องสมุดประชาชน (แห่ง)" 
+          value={totalLIBRARY} 
+          icon={<BookOpenText size={24} />} 
+          colorClass="bg-rose-700"  
+        />
+        {/* <StatCard 
+          title="ศูนย์ฝึกอาชีพ/ผลิตภัณฑ์ชุมชน (แห่ง)"     
+          value={totalOCCUPATION} 
+          icon={<Utensils size={24} />} 
+          colorClass="bg-rose-700"  
+        />
+        <StatCard 
+          title="แหล่งท่องเที่ยวเชิงนิเวศ/วัฒนธรรม (แห่ง)"   
+          value={totalTOURISM} 
+          icon={<Utensils size={24} />} 
+          colorClass="bg-rose-700"  
+          />
+        <StatCard 
+          title="ภูมิปัญญาท้องถิ่น/ปราชญ์ชาวบ้าน (แห่ง)"     
+          value={totalWISDOM} 
+          icon={<Utensils size={24} />} 
+          colorClass="bg-rose-700"  
+        /> */}
+         
+        {/* <StatCard 
+          title="แหล่งเรียนรู้อื่นๆ888" 
+          value={totalAbout.length} 
+          icon={<Star size={24} />} 
+          colorClass="bg-emerald-700" 
+        /> */}
+        <StatCard 
           title="ผู้เข้าชมสะสม (คน)" 
           value={totalVisits.toLocaleString()} 
           icon={<Users size={24} />} 
           colorClass="bg-blue-800" 
-        />
-        <StatCard 
-          title="สถานที่ในระบบ (แห่ง)" 
-          value={totalPlaces} 
-          icon={<MapPin size={24} />} 
-          colorClass="bg-amber-600" 
-        />
-        <StatCard 
-          title="ขนมไทยโบราณ (เมนู)" 
-          value={totalDesserts} 
-          icon={<Utensils size={24} />} 
-          colorClass="bg-rose-600" 
         />
         <StatCard 
           title="ความพึงพอใจเฉลี่ย" 
@@ -127,13 +225,13 @@ const Dashboard: React.FC<DashboardProps> = ({ places, desserts, onSelectPlace, 
         <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
             <div className="flex items-center gap-2">
                 <TrendingUp className="text-blue-900" size={24} />
-                <h3 className="text-lg font-bold text-blue-900">แหล่งเรียนรู้แนะนำประจำเดือน (Highlights)</h3>
+                <h3 className="text-lg font-bold text-blue-900">ศูนย์รวมข้อมูลเพื่อติดต่อราชการ มิติใหม่ติดต่อราชการ รู้ทุกเรื่องบริการภาครัฐ รู้ใจประชาชน </h3>
             </div>
             <div className="hidden md:flex gap-2">
                  <button 
                     onClick={() => scroll(scrollContainerRef, 'left')}
                     className="p-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600"
-                >
+                    >
                     <ChevronLeft size={20} />
                 </button>
                 <button 
@@ -193,7 +291,42 @@ const Dashboard: React.FC<DashboardProps> = ({ places, desserts, onSelectPlace, 
         </div>
       </div>
 
-      {/* Featured Desserts Carousel */}
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard 
+          title="Co-Learning Space (แห่ง)" 
+          value={CO_LEARNING} 
+          icon={<HandPlatter size={24} />} 
+          colorClass="bg-rose-600" 
+        />
+        <StatCard 
+          title="ศูนย์ฝึกอาชีพ/ผลิตภัณฑ์ชุมชน (แห่ง)"     
+          value={totalOCCUPATION} 
+          icon={<Heater size={24} />} 
+          colorClass="bg-rose-700"  
+        />
+        <StatCard 
+          title="แหล่งท่องเที่ยวเชิงนิเวศ/วัฒนธรรม (แห่ง)"   
+          value={totalTOURISM} 
+          icon={<TreePine size={24} />} 
+          colorClass="bg-rose-700"  
+          />
+        <StatCard 
+          title="ภูมิปัญญาท้องถิ่น/ปราชญ์ชาวบ้าน (แห่ง)"     
+          value={totalWISDOM} 
+          icon={<Fence size={24} />} 
+          colorClass="bg-rose-700"  
+        />
+        <StatCard 
+          title="แหล่งเรียนรู้อื่นๆ" 
+          value={totalDesserts} 
+          icon={<Atom size={24} />} 
+          colorClass="bg-emerald-700" 
+        />
+      </div>  
+      
+        {/* Featured Desserts Carousel */}
+    
       <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 relative group/desserts">
         <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
             <div className="flex items-center gap-2">
@@ -234,26 +367,26 @@ const Dashboard: React.FC<DashboardProps> = ({ places, desserts, onSelectPlace, 
             className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-none"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-            {desserts.map((dessert) => (
+            {desserts.map((DISTRICT) => (
                 <div 
-                    key={dessert.id} 
-                    onClick={() => onSelectDessert(dessert)}
+                    key={DISTRICT.id} 
+                    onClick={() => onSelectDessert(DISTRICT)}
                     className="min-w-[250px] md:min-w-[280px] snap-center flex-shrink-0 group relative rounded-lg overflow-hidden h-48 border border-slate-200 cursor-pointer hover:shadow-lg transition-all"
                 >
                     <img 
-                        src={dessert.images.main} 
-                        alt={dessert.name} 
+                        src={DISTRICT.images.main} 
+                        alt={DISTRICT.name} 
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-amber-950 via-transparent to-transparent opacity-80"></div>
                     <div className="absolute bottom-0 left-0 p-4 w-full">
                         <div className="flex justify-between items-end mb-1">
                              <span className="text-[10px] bg-white/90 text-amber-800 px-2 py-0.5 rounded shadow-sm font-bold">
-                                {dessert.origin}
+                                {DISTRICT.origin}
                             </span>
                         </div>
-                        <h4 className="text-white text-base font-bold truncate drop-shadow-sm">{dessert.name}</h4>
-                        <p className="text-amber-100 text-xs truncate opacity-90 mt-0.5">{dessert.localName || '-'}</p>
+                        <h4 className="text-white text-base font-bold truncate drop-shadow-sm">{DISTRICT.name}</h4>
+                        <p className="text-amber-100 text-xs truncate opacity-90 mt-0.5">{DISTRICT.localName || '-'}</p>
                     </div>
                 </div>
             ))}
