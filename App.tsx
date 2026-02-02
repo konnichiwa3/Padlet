@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Map, List, Settings, Search, Menu, Bot, Navigation, Utensils,
-  Calendar, Users, BarChart3, PieChart
+  Calendar, Users, BarChart3, PieChart, Building2, BookOpen, Lightbulb, Brain,
+  KeyRound,
+  Camera
 } from 'lucide-react';
-import { Place, ViewState, ThaiDessert } from './types';
+import { Place, ViewState, ThaiDessert, Category  } from './types';
 import { MOCK_PLACES, MOCK_USER_LOCATION, MOCK_DESSERTS } from './constants';
 import Dashboard from './components/Dashboard';
 import MapComponent from './components/MapComponent';
@@ -12,6 +14,7 @@ import AdminPanel from './components/AdminPanel';
 import DessertLibrary from './components/DessertLibrary';
 import DessertDetail from './components/DessertDetail';
 import { getGeminiRecommendation } from './services/geminiService';
+
 
 // Navbar Component - Formal Theme
 const Navbar: React.FC<{ 
@@ -31,9 +34,9 @@ const Navbar: React.FC<{
         </div>
         <div>
             <h1 className="text-lg font-bold tracking-wide leading-tight hidden md:block">
-                ระบบสารสนเทศภูมิปัญญาท้องถิ่น
+                ระบบฐานข้อมูลสารสนเทศ สกร.ประจำจังหวัดเชียงราย
             </h1>
-            <p className="text-[10px] text-blue-200 hidden md:block">Local Wisdom & Tourism Information System</p>
+            <p className="text-[10px] text-blue-200 hidden md:block">DOLE Chiangrai Information System</p>
         </div>
       </div>
     </div>
@@ -43,7 +46,7 @@ const Navbar: React.FC<{
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
         <input 
           type="text" 
-          placeholder="ค้นหาสถานที่, ปราชญ์ชาวบ้าน..." 
+          placeholder="รัะบุคๆ หรือค้นหาสถานที่ ที่ต้องการค้นหา..." 
           className="w-full pl-10 pr-12 py-2 bg-slate-50 border-transparent focus:bg-white focus:ring-2 focus:ring-amber-400 rounded text-slate-800 text-sm transition-all outline-none shadow-inner"
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -60,8 +63,8 @@ const Navbar: React.FC<{
 
     <div className="flex items-center gap-3">
         <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-white">เจ้าหน้าที่ สกร.</p>
-            <p className="text-[10px] text-amber-300">Admin Level</p>
+            <p className="text-sm font-medium text-white">สำนักงานส่งเสริมการเรียนรู้ประจำจังหวัดเชียงราย</p>
+            <p className="text-[10px] text-amber-300">Dearner Data Platform: DOLELD</p>
         </div>
         <div className="w-10 h-10 bg-blue-700 rounded-full overflow-hidden border-2 border-amber-400 p-0.5">
              <img src="https://picsum.photos/100/100?random=user" alt="User" className="rounded-full w-full h-full object-cover" />
@@ -77,17 +80,22 @@ const Sidebar: React.FC<{
     isOpen: boolean;
 }> = ({ currentView, setView, isOpen }) => {
     const menuItems = [
-        { id: 'DASHBOARD', label: 'ภาพรวม (Dashboard)', icon: <LayoutDashboard size={20} /> },
+        { id: 'DASHBOARD', label: '(Dashboard)', icon: <LayoutDashboard size={20} /> },
         { id: 'MAP', label: 'แผนที่ภูมิสารสนเทศ', icon: <Map size={20} /> },
-        { id: 'LIST', label: 'ทะเบียนสถานที่', icon: <List size={20} /> },
-        { id: 'DESSERTS', label: 'ขนมไทยโบราณ', icon: <Utensils size={20} /> },
-        { id: 'ADMIN', label: 'จัดการฐานข้อมูล', icon: <Settings size={20} /> },
+        { id: 'LIST', label: 'ข้อมูลสถานศึกษาในสังกัด', icon: <List size={20} /> },
+        { id: 'SUB_DISTRICT', label: 'ศกร.ระดับตำบล', icon: <Bot size={20} /> },
+        { id: 'COMMUNITY_LC', label: 'ข้อมูล ศศช.”', icon: <Navigation size={20} /> },
+        { id: 'OTHER', label: 'แหล่งเรียนรู้อื่นๆ', icon: <Camera size={20} /> },
+        { id: 'DESSERTS', label: 'ขนมไทยโบราณ', icon: <Utensils size={20} /> },  
+        { id: 'ADMIN', label: 'เข้าสู่ระบบ', icon: <KeyRound size={20} /> },            
+        { id: 'INFO', label: 'จัดการข้อมูลเว็บไซต์', icon: <Settings size={20} /> },
+             
     ];
 
     return (
         <aside className={`fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-slate-200 w-64 transition-transform z-20 shadow-lg ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             <div className="p-4 bg-slate-50 border-b border-slate-200 mb-2">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">เมนูหลัก</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">เมนูหลัก</p>
             </div>
             <nav className="p-2 space-y-1">
                 {menuItems.map((item) => (
@@ -108,9 +116,9 @@ const Sidebar: React.FC<{
             <div className="absolute bottom-0 w-full p-4 bg-slate-50 border-t border-slate-200">
                 <div className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-lg p-4 text-white relative overflow-hidden shadow-inner">
                     <div className="relative z-10">
-                        <h4 className="font-bold mb-1 text-amber-400">ศูนย์ช่วยเหลือ</h4>
-                        <p className="text-[10px] text-blue-100 mb-2">ติดต่อฝ่ายเทคนิคหรือแจ้งปัญหาการใช้งาน</p>
-                        <button className="text-[10px] bg-white text-blue-900 px-3 py-1 rounded font-bold shadow hover:bg-slate-100 w-full">โทร 053-772693</button>
+                        <h4 className="font-bold mb-1 text-amber-400">ช่องทางติดต่อ</h4>
+                        <p className="text-[15px] text-blue-100 mb-2">chiangrai@dole.go.th</p>
+                        <button className="text-[15px] bg-white text-blue-900 px-3 py-1 rounded font-bold shadow hover:bg-slate-100 w-full">โทร 053-711944</button>
                     </div>
                     <div className="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full"></div>
                 </div>
@@ -328,7 +336,7 @@ const App: React.FC = () => {
                         <Bot size={24} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg mb-1 text-blue-900">ระบบแนะนำอัจฉริยะ (AI Suggestion)</h3>
+                        <h3 className="font-bold text-lg mb-1 text-blue-900">บริการค้นหาข้อมูล และจุดบริการภาครัฐ (Tag AI )</h3>
                         <p className="text-slate-600 text-sm whitespace-pre-line leading-relaxed">{aiRecommendation}</p>
                     </div>
                 </div>
@@ -339,14 +347,19 @@ const App: React.FC = () => {
             <div className="mb-6 flex justify-between items-end border-b border-slate-200 pb-4">
                 <div>
                     <h2 className="text-2xl font-bold text-blue-900">
-                        {currentView === 'DASHBOARD' && 'รายงานภาพรวมแหล่งเรียนรู้ และ ขนมไทยโบราณ'}
-                        {currentView === 'MAP' && 'แผนที่ข้อมูลชุมชนเพื่อการท่องเที่ยวและเรียนรู้'}
-                        {currentView === 'LIST' && 'ทะเบียนข้อมูลสถานที่'}
-                        {currentView === 'DESSERTS' && 'สารานุกรมขนมไทยโบราณ'}
-                        {currentView === 'ADMIN' && 'ระบบบริหารจัดการข้อมูลส่วนกลาง'}
+                        {currentView === 'ADMIN' && 'ระบบบริหารจัดการข้อมูลสารสนเทศ '}
+                        {currentView === 'DASHBOARD' && 'ระบบการเชื่อมโยงข้อมูลขนาดใหญ่ และระบบคลังข้อมูลเพื่อรองรับนโยบายด้านการบริหารจัดการ'}
+                        {currentView === 'MAP' && 'แผนที่แสดงข้อมูลหมุดที่ตั้งสถานที่ศึกษา และแหล่งเรียนรู้'}
+                        {currentView === 'LIST' && 'ข้อมูลสารสนเทศสถานศึกษาในสังกัด'}
+                        {currentView === 'SUB_DISTRICT' && 'ศูนย์การเรียนรู้ชุมชน ศูนย์กลางการเรียนรู้ตลอดชีวิตของประชาชน '}
+                        {currentView === 'DISTRICT_LC' && 'ศูนย์การเรียนชุมชนชาวไทยภูเขา “แม่ฟ้าหลวง”'}
+                        {currentView === 'OTHER' && 'ภูมิปัญญาท้องถิ่น/ปราชญ์ชาวบ้าน และแหล่งเรียนรู้อื่นๆ'}        
+                        {currentView === 'DESSERTS' && 'ศูนย์ฝึกอาชีพ/ผลิตภัณฑ์ชุมชน/สารานุกรมขนมไทยโบราณ'}
+                        {currentView === 'INFO' && 'แนะนำบริการภาครัฐ '}
+                        
                     </h2>
                     <p className="text-slate-500 text-sm mt-1">
-                         {currentView === 'ADMIN' ? 'เข้าถึงเฉพาะเจ้าหน้าที่ผู้ได้รับอนุญาต' : 'ข้อมูลชุมชนเพื่อการท่องเที่ยวและการเรียนรู้'}
+                         {currentView === 'ADMIN' ? 'สำหรับสถานศึกษา สกร.ประจำจังหวัด' : 'Department of Learning Encouragement, DOLE"'}
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -372,14 +385,33 @@ const App: React.FC = () => {
                     onSelectPlace={setSelectedPlace}
                 />
             )}
-            
+
             {currentView === 'LIST' && (
                 <PlaceGrid places={filteredPlaces} onSelect={setSelectedPlace} />
             )}
 
+            {currentView === 'DISTRICT_LC' && (
+                <PlaceGrid places={filteredPlaces.filter(p => p.category === Category.DISTRICT_LC)} onSelect={setSelectedPlace} />
+            )}
+
+            {currentView === 'OTHER' && (
+                <PlaceGrid places={filteredPlaces.filter(p => p.category === Category.OTHER)} onSelect={setSelectedPlace} />
+             )}
+   
+            {currentView === 'SUB_DISTRICT' && (
+                <PlaceGrid places={filteredPlaces.filter(p => p.category === Category.SUB_DISTRICT)} onSelect={setSelectedPlace} />
+             )}
+
+             {currentView === 'COMMUNITY_LC' && (
+                <PlaceGrid places={filteredPlaces.filter(p => p.category === Category.COMMUNITY_LC)} onSelect={setSelectedPlace} />
+             )}
+
+             
+
             {currentView === 'DESSERTS' && (
                 <DessertLibrary desserts={desserts} onSelectDessert={setSelectedDessert} />
-            )}
+
+             )}
 
             {currentView === 'ADMIN' && (
                 <AdminPanel 
@@ -430,7 +462,7 @@ const App: React.FC = () => {
                      <span className="font-bold text-indigo-600 text-xl">{stats.year.toLocaleString()}</span>
                  </div>
             </div>
-            <p>© 2024 ระบบสารสนเทศภูมิปัญญาท้องถิ่น (Local Wisdom Connect). สงวนลิขสิทธิ์.</p>
+            <p>สงวนลิขสิทธิ์ พ.ศ. 2569-2572 สำนักงานส่งเสริมการเรียนร ู้ประจำจังหวัดเชียงราย (DOLE Chiangrai Information System). สงวนลิขสิทธิ์.</p>
         </footer>
       </main>
 
