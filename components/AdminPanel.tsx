@@ -13,8 +13,8 @@ interface AdminPanelProps {
   onDeletePlace: (id: string) => void;
   // Dessert Props
   desserts: ThaiDessert[];
-  onAddDessert: (dessert: ThaiDessert) => void;
-  onUpdateDessert: (dessert: ThaiDessert) => void;
+  onAddDessert: (DISTRICT: ThaiDessert) => void;
+  onUpdateDessert: (DISTRICT: ThaiDessert) => void;
   onDeleteDessert: (id: string) => void;
 }
 
@@ -81,7 +81,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'Phansweetlocal1111') {
+    if (username === 'admin' && password === 'sayoonara') {
         setIsLoggedIn(true);
         setLoginError('');
     } else {
@@ -145,9 +145,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setIsFormVisible(true);
   };
 
-  const handleClickEditDessert = (dessert: ThaiDessert) => {
-      setNewDessert(JSON.parse(JSON.stringify(dessert))); // Deep copy
-      setEditingId(dessert.id);
+  const handleClickEditDessert = (DISTRICT: ThaiDessert) => {
+      setNewDessert(JSON.parse(JSON.stringify(DISTRICT))); // Deep copy
+      setEditingId(DISTRICT.id);
       setIsFormVisible(true);
   };
 
@@ -516,15 +516,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                   <button onClick={() => onDeletePlace(place.id)} className="text-red-700 hover:bg-red-50 p-2 rounded"><Trash2 size={16} /></button>
                 </td>
               </tr>
-            )) : desserts.map((dessert) => (
-                <tr key={dessert.id} className="border-b border-slate-100 hover:bg-amber-50/50 transition-colors">
-                  <td className="p-4 font-semibold text-slate-800">{dessert.name}</td>
-                  <td className="p-4">{dessert.origin}</td>
-                  <td className="p-4">{dessert.ingredients.length} รายการ</td>
-                  <td className="p-4">{dessert.nutrition.calories} kcal</td>
+            )) : desserts.map((DISTRICT) => (
+                <tr key={DISTRICT.id} className="border-b border-slate-100 hover:bg-amber-50/50 transition-colors">
+                  <td className="p-4 font-semibold text-slate-800">{DISTRICT.name}</td>
+                  <td className="p-4">{DISTRICT.origin}</td>
+                  <td className="p-4">{DISTRICT.ingredients.length} รายการ</td>
+                  <td className="p-4">{DISTRICT.nutrition.calories} kcal</td>
                   <td className="p-4 flex gap-2 justify-end">
-                    <button onClick={() => handleClickEditDessert(dessert)} className="text-amber-700 hover:bg-amber-50 p-2 rounded"><Edit size={16} /></button>
-                    <button onClick={() => onDeleteDessert(dessert.id)} className="text-red-700 hover:bg-red-50 p-2 rounded"><Trash2 size={16} /></button>
+                    <button onClick={() => handleClickEditDessert(DISTRICT)} className="text-amber-700 hover:bg-amber-50 p-2 rounded"><Edit size={16} /></button>
+                    <button onClick={() => onDeleteDessert(DISTRICT.id)} className="text-red-700 hover:bg-red-50 p-2 rounded"><Trash2 size={16} /></button>
                   </td>
                 </tr>
             ))}
